@@ -1,5 +1,7 @@
 package com.capgemini.addressbookcsv;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -9,20 +11,20 @@ import java.util.function.Predicate;
 
 public class AddressBookManagement {
 	static Scanner sc = new Scanner(System.in);
-	public static Map<String, AddressBookMain> addressBookMap = new TreeMap<>();
-	public static Map<String, Contact> cityContactMap = new TreeMap<>();
-	public static Map<String, Contact> stateContactMap = new TreeMap<>();
+	public static Map<String, AddressBookMain> nameToAddressBookMap = new TreeMap<>();
+	public static Map<String, Contact> cityToContactEntryMap = new TreeMap<>();
+	public static Map<String, Contact> stateToContactEntryMap = new TreeMap<>();
 
-	public static void addAddressBook() {
-		AddressBookMain addressBook = new AddressBookMain();
-		System.out.println("Enter the name of address book");
+	public static void addNewAddressBook() {
+		AddressBookMain object = new AddressBookMain();
+		System.out.println("Enter a unique name");
 		String name = sc.next();
-		addressBook.manageAddressBook();
-		addressBookMap.put(name, addressBook);
+		object.maintainAddressBook();
+		nameToAddressBookMap.put(name, object);
 	}
 
 	public static void showContactGroupedByCity() {
-		Set<String> listOfCity = cityContactMap.keySet();
+		Set<String> listOfCity = cityToContactEntryMap.keySet();
 		for (String city : listOfCity) {
 			System.out.println("Contact Entries for CITY: " + city);
 			searchPersonInBook(city);
@@ -30,7 +32,7 @@ public class AddressBookManagement {
 	}
 
 	public static void showContactGroupedByState() {
-		Set<String> listOfState = stateContactMap.keySet();
+		Set<String> listOfState = stateToContactEntryMap.keySet();
 		for (String state : listOfState) {
 			System.out.println("Contact Entries for STATE: " + state);
 			searchPersonInBook(state);
@@ -40,24 +42,24 @@ public class AddressBookManagement {
 	public static void searchPersonInBook(String searchIn) {
 		Predicate<Contact> search = n -> n.getFirstName().equals(searchIn) ? true : false;
 		Consumer<Contact> display = n -> System.out.println(n);
-		addressBookMap.forEach((k, v) -> {
+		nameToAddressBookMap.forEach((k, v) -> {
 			v.getcontactArray().stream().filter(search).forEach(display);
 		});
 	}
 
 	public static void countByCity() {
-		Set<String> listOfCity = cityContactMap.keySet();
+		Set<String> listOfCity = cityToContactEntryMap.keySet();
 		for (String cityName : listOfCity) {
-			Contact contactNumber = cityContactMap.get(cityName);
+			Contact contactNumber = cityToContactEntryMap.get(cityName);
 			System.out.println("No of contact entries for CITY " + cityName + " "
 					+ ((Map<String, AddressBookMain>) contactNumber).size());
 		}
 	}
 
 	public static void countByState() {
-		Set<String> listOfState = stateContactMap.keySet();
+		Set<String> listOfState = stateToContactEntryMap.keySet();
 		for (String stateName : listOfState) {
-			Contact contactNumber = stateContactMap.get(stateName);
+			Contact contactNumber = stateToContactEntryMap.get(stateName);
 			System.out.println("No of contact entries for STATE " + stateName + " "
 					+ ((Map<String, AddressBookMain>) contactNumber).size());
 		}
@@ -66,10 +68,14 @@ public class AddressBookManagement {
 	public static void main(String args[]) {
 		AddressBookManagement aBookManager = new AddressBookManagement();
 		while (true) {
-			System.out.println("\n Please Enter your choice" + "\n1. Add a new Address Book"
-					+ "\n2. Search person across all address books" + "\n3. Show contact  by city"
-					+ "\n4. Show contacts by state" + "\n5. count contacts  by city" + "\n6. count contacts by state"
-					+ "\n7. Exit");
+			System.out.println("\n1. Add a new Address Book");
+			System.out.println("\n2. Search person across all address books");
+			System.out.println("\n3. Show contact  by city");
+			System.out.println("\n4. Show contacts by state");
+			System.out.println("\n5. count contacts  by city");
+			System.out.println("\n6. count contacts by state");
+			System.out.println("\n7. Exit");
+			System.out.println("\n Please Enter your choice");
 			int choice = sc.nextInt();
 			switch (choice) {
 			case 1:
@@ -77,13 +83,13 @@ public class AddressBookManagement {
 					AddressBookMain m = new AddressBookMain();
 					System.out.println("Enter A name for address Book");
 					String name = sc.next();
-					if (aBookManager.addressBookMap.containsKey(name)) {
+					if (aBookManager.nameToAddressBookMap.containsKey(name)) {
 						System.out.println("\nAddress Book already exists !!!\n");
 						continue;
 					} else {
-						aBookManager.addressBookMap.put(name, m);
+						aBookManager.nameToAddressBookMap.put(name, m);
 						System.out.println("\n In Address Book : " + name);
-						m.manageAddressBook();
+						m.maintainAddressBook();
 						break;
 					}
 				}
