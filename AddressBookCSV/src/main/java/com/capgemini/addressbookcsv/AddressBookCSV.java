@@ -1,4 +1,4 @@
-package com.capg.addressbook;
+package com.capgemini.addressbookcsv;
 
 import java.io.IOException;
 import java.io.Reader;
